@@ -1,0 +1,37 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /community
+
+spring:
+  profiles:
+    active: dev
+  thymeleaf:
+    cache: false
+    check-template: true
+    check-template-location: true
+    enabled: true
+    encoding: UTF-8
+    mode: HTML5
+    prefix: classpath:/templates
+    suffix: .html
+    servlet:
+      content-type: text/html
+  datasource:
+    druid:
+      username: ${nowcoder.community.datasource.username}
+      password: ${nowcoder.community.datasource.password}
+      url: jdbc:mysql://${nowcoder.community.datasource.host}:${nowcoder.community.datasource.port}/${nowcoder.community.datasource.database}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+      driver-class-name: ${nowcoder.community.datasource.driver-class-name}
+
+mybatis:
+  #mapper配置文件
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.nowcoder.community.entity
+  configuration:
+    #开启驼峰命名
+    map-underscore-to-camel-case: true
+
+#logging:
+#  level:
+#    com.nowcoder.community: debug
