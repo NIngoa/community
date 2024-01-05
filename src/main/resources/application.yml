@@ -24,6 +24,17 @@ spring:
       url: jdbc:mysql://${nowcoder.community.datasource.host}:${nowcoder.community.datasource.port}/${nowcoder.community.datasource.database}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
       driver-class-name: ${nowcoder.community.datasource.driver-class-name}
 
+  mail:
+    host: smtp.qq.com
+    port: 465
+    username: ${nowcoder.community.mail.username}
+    password: ${nowcoder.community.mail.password}
+    protocol: smtps
+    properties:
+      mail:
+        smtp:
+          ssl:
+            enable: true
 mybatis:
   #mapper配置文件
   mapper-locations: classpath:mapper/*.xml
@@ -35,3 +46,4 @@ mybatis:
 #logging:
 #  level:
 #    com.nowcoder.community: debug
+
