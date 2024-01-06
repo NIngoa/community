@@ -28,6 +28,12 @@ public class HomeController {
     @Autowired
     private UserService userService;
 
+    /**
+     * 首页
+     * @param model
+     * @param page
+     * @return
+     */
     @RequestMapping(path = "/index",method = RequestMethod.GET)
     public String getIndexPage(Model model, Page page) {
         log.info("显示帖子:{}",model);

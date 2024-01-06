@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -19,5 +20,5 @@ public class User {
     private int status;
     private String activationCode;
     private String headerUrl;
-    private Date createTime;
+    private LocalDateTime createTime;
 }
