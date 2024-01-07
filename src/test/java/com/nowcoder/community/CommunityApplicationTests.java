@@ -20,6 +20,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.swing.plaf.PanelUI;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 @SpringBootTest
 @ContextConfiguration(classes = CommunityApplication.class)
@@ -77,7 +79,7 @@ class CommunityApplicationTests implements ApplicationContextAware {
         user.setPassword("123456");
         user.setEmail("");
         user.setHeaderUrl("http://www.nowcoder.com/images/default_header.gif");
-        user.setCreateTime(new Date());
+        user.setCreateTime(LocalDateTime.now());
         user.setStatus(1);
         user.setType(1);
         user.setActivationCode("123456");

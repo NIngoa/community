@@ -1,5 +1,6 @@
 package com.nowcoder.community.controller;
 
+import com.google.code.kaptcha.Producer;
 import com.nowcoder.community.entity.User;
 import com.nowcoder.community.service.UserService;
 import com.nowcoder.community.utils.CommunityConstant;
@@ -9,13 +10,22 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.imageio.ImageIO;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.Map;
+import java.util.Properties;
 
 @Controller
 @Slf4j
 public class LoginController implements CommunityConstant {
     @Autowired
     private UserService userService;
+    @Autowired
+    private Producer kaptchaProducer;
     /**
      * 注册页面
      * @return
@@ -78,4 +88,17 @@ public class LoginController implements CommunityConstant {
         return "/site/operate-result";
     }
 
+    @RequestMapping(path = "/kaptcha",method = RequestMethod.GET)
+    public void getKaptcha(HttpServletResponse response, HttpSession httpSession){
+        String text = kaptchaProducer.createText();
+        BufferedImage image = kaptchaProducer.createImage(text);
+        httpSession.setAttribute("katpcha",text);
+        response.setContentType("image/png");
+        try {
+            ServletOutputStream outputStream = response.getOutputStream();
+            ImageIO.write(image,"png",outputStream);
+        } catch (IOException e) {
+            log.error("响应验证码失败:{}",e.getMessage());
+        }
+    }
 }
