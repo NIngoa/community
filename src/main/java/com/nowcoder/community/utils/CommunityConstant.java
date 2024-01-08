@@ -15,4 +15,12 @@ public interface CommunityConstant {
      */
     int ACTIVATION_FAIL = 2;
 
+    /**
+     * 默认过期时间
+     */
+    int DEFAULT_EXPIRED_SECONDS = 3600*24;
+    /**
+     * 记住我过期时间
+     */
+    int REMEMBER_ME_EXPIRED_SECONDS = 3600*24*30;
 }

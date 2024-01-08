@@ -1,6 +1,8 @@
 package com.nowcoder.community.service.Impl;
 
+import com.nowcoder.community.dao.LoginTicketMapper;
 import com.nowcoder.community.dao.UserMapper;
+import com.nowcoder.community.entity.LoginTicket;
 import com.nowcoder.community.entity.User;
 import com.nowcoder.community.utils.CommunityConstant;
 import com.nowcoder.community.service.UserService;
@@ -26,6 +28,8 @@ public class UserServiceImpl implements UserService, CommunityConstant {
     private MailClient mailClient;
     @Autowired
     private TemplateEngine templateEngine;
+    @Autowired
+    private LoginTicketMapper loginTicketMapper;
     @Value("${community.path.domain}")
     private String domain;
     @Value("${server.servlet.context-path}")
@@ -79,7 +83,7 @@ public class UserServiceImpl implements UserService, CommunityConstant {
         //注册用户
         user.setUsername(user.getUsername());
         user.setSalt(CommunityUtil.getUUID().substring(0,5));
-        user.setPassword(CommunityUtil.md5(user.getSalt() + user.getPassword()));
+        user.setPassword(CommunityUtil.md5(user.getPassword() + user.getSalt()));
         user.setType(0);
         user.setStatus(0);
         user.setActivationCode(CommunityUtil.getUUID());
@@ -96,7 +100,6 @@ public class UserServiceImpl implements UserService, CommunityConstant {
         mailClient.sendMail(user.getEmail(),"激活邮件",content);
         return map;
     }
-
     /**
      * 激活
      */
@@ -112,5 +115,48 @@ public class UserServiceImpl implements UserService, CommunityConstant {
         }else {
             return ACTIVATION_FAIL;
         }
+    }
+    /**
+     * 登录
+     */
+    @Override
+    public Map<String, Object> login(String username, String password, int expiredTime) {
+        Map<String,Object>map=new HashMap<>();
+        if (StringUtils.isBlank(username)){
+            map.put("usernameMsg","用户名不能为空");
+            return map;
+        }
+        if (StringUtils.isBlank(password)){
+            map.put("passwordMsg","密码不能为空");
+            return map;
+        }
+        User user = userMapper.selectByName(username);
+        if (user==null){
+            map.put("usernameMsg","该用户不存在");
+            return map;
+        }
+        if (user.getStatus()==0){
+            map.put("usernameMsg","该用户未激活");
+            return map;
+        }
+        password= CommunityUtil.md5(password+ user.getSalt() );
+        if (!password.equals(user.getPassword())){
+            map.put("passwordMsg","密码不正确");
+            return map;
+        }
+        LoginTicket loginTicket=new LoginTicket();
+        loginTicket.setUserId(user.getId());
+        loginTicket.setTicket(CommunityUtil.getUUID());
+        loginTicket.setStatus(0);
+        loginTicket.setExpireTime(LocalDateTime.now().plusSeconds(expiredTime));
+        loginTicketMapper.insertLoginTicket(loginTicket);
+
+        map.put("ticket",loginTicket.getTicket());
+        return map;
+    }
+
+    @Override
+    public void logout(String ticket) {
+        loginTicketMapper.updateStatus(ticket,1);
     }
 }
