@@ -2,7 +2,9 @@ package com.nowcoder.community;
 
 import com.nowcoder.community.config.config;
 import com.nowcoder.community.dao.Dao;
+import com.nowcoder.community.dao.LoginTicketMapper;
 import com.nowcoder.community.dao.UserMapper;
+import com.nowcoder.community.entity.LoginTicket;
 import com.nowcoder.community.entity.User;
 import com.nowcoder.community.service.testService;
 import org.junit.jupiter.api.Test;
@@ -32,6 +34,8 @@ class CommunityApplicationTests implements ApplicationContextAware {
 
     private ApplicationContext applicationContext;
 
+    @Autowired
+    private LoginTicketMapper loginTicketMapper;
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
@@ -87,5 +91,11 @@ class CommunityApplicationTests implements ApplicationContextAware {
         int row= userMapper.insertUser(user);
         System.out.println(row);
         System.out.println(user);
+    }
+    @Test
+    public void testloginticket(){
+        LoginTicket loginTicket = loginTicketMapper.selectByTicket("d3f4e8b7f25547519f5b17627a6f423b");
+        System.out.println(loginTicket);
+
     }
 }

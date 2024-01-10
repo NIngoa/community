@@ -15,5 +15,5 @@ public class LoginTicket {
     private int userId;
     private String ticket;
     private int status;
-    private LocalDateTime expireTime;
+    private LocalDateTime expired;
 }

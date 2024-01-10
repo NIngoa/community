@@ -43,6 +43,11 @@ public class UserServiceImpl implements UserService, CommunityConstant {
         return userMapper.selectById(userId);
     }
 
+    @Override
+    public LoginTicket findLoginTicket(String ticket) {
+        return loginTicketMapper.selectByTicket(ticket);
+    }
+
     /**
      * 注册
      */
@@ -148,7 +153,7 @@ public class UserServiceImpl implements UserService, CommunityConstant {
         loginTicket.setUserId(user.getId());
         loginTicket.setTicket(CommunityUtil.getUUID());
         loginTicket.setStatus(0);
-        loginTicket.setExpireTime(LocalDateTime.now().plusSeconds(expiredTime));
+        loginTicket.setExpired(LocalDateTime.now().plusSeconds(expiredTime));
         loginTicketMapper.insertLoginTicket(loginTicket);
 
         map.put("ticket",loginTicket.getTicket());
