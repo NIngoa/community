@@ -164,4 +164,16 @@ public class UserServiceImpl implements UserService, CommunityConstant {
     public void logout(String ticket) {
         loginTicketMapper.updateStatus(ticket,1);
     }
+
+    @Override
+    public int updateHeader(int userId, String headUrl) {
+        return userMapper.updateHeader(userId,headUrl);
+    }
+
+    @Override
+    public void changePassword(String ticket, String newPassword, User user) {
+        int userId = user.getId();
+        userMapper.updatePassword(userId,CommunityUtil.md5(newPassword+user.getSalt()));
+        logout(ticket);
+    }
 }
