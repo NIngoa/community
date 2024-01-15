@@ -10,4 +10,8 @@ public interface DiscussPostService{
 
 
     int findDiscussPostRows(int userId);
+
+    void addDiscussPost(DiscussPost discussPost);
+
+    DiscussPost selectDiscussPostById(int id);
 }

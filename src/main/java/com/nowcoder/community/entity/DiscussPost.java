@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -14,11 +14,15 @@ import java.util.Date;
 public class DiscussPost {
     private int id;
     private int userId;
+    // 标题
     private String title;
+    // 文章内容
     private String content;
     private int type;
     private int status;
-    private Date createTime;
+    private LocalDateTime createTime;
+    // 评论数
     private int commentCount;
+    // 点赞数
     private double score;
 }
