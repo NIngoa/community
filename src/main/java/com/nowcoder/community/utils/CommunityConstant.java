@@ -23,4 +23,13 @@ public interface CommunityConstant {
      * 记住我过期时间
      */
     int REMEMBER_ME_EXPIRED_SECONDS = 3600*24*30;
+
+    /**
+     * 实体类型：帖子
+     */
+    int ENTITY_TYPE_POST = 1;
+    /**
+     * 实体类型：评论
+     */
+    int ENTITY_TYPE_COMMENT = 2;
 }

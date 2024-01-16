@@ -1,28 +1,21 @@
 package com.nowcoder.community;
 
-import com.nowcoder.community.config.config;
 import com.nowcoder.community.dao.Dao;
 import com.nowcoder.community.dao.LoginTicketMapper;
 import com.nowcoder.community.dao.UserMapper;
 import com.nowcoder.community.entity.LoginTicket;
 import com.nowcoder.community.entity.User;
-import com.nowcoder.community.service.testService;
+import com.nowcoder.community.service.TestService;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationContextFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.swing.plaf.PanelUI;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 @SpringBootTest
@@ -52,9 +45,9 @@ class CommunityApplicationTests implements ApplicationContextAware {
     }
     @Test
     public void testBeaManagement(){
-        testService bean = applicationContext.getBean(testService.class);
+        TestService bean = applicationContext.getBean(TestService.class);
         System.out.println(bean);
-        bean = applicationContext.getBean(testService.class);
+        bean = applicationContext.getBean(TestService.class);
         System.out.println(bean);
     }
     @Test
@@ -69,7 +62,7 @@ class CommunityApplicationTests implements ApplicationContextAware {
     @Autowired
     private SimpleDateFormat simpleDateFormat;
     @Autowired
-    private testService testService;
+    private TestService testService;
     @Test
     public  void testDI(){
         System.out.println(dao);
