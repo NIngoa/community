@@ -7,4 +7,6 @@ import java.util.List;
 public interface CommentService {
     List<Comment>findCommentByEntity(int entityType, int entityId, int offset, int limit);
     int findCountByEntity(int entityType, int entityId);
+
+    int insertComment(Comment comment);
 }

@@ -59,6 +59,13 @@ public class DiscussPostController implements CommunityConstant{
         return CommunityUtil.getJsonStr(0, "发布成功");
     }
 
+    /**
+     * 详情
+     *
+     * @param discussPostId
+     * @param model
+     * @return
+     */
     @RequestMapping(path = "/detail/{discussPostId}", method = RequestMethod.GET)
     public String getDiscussPostDetail(@PathVariable("discussPostId") int discussPostId, Model model, Page page) {
         // 获取帖子信息
