@@ -81,7 +81,7 @@ public class MessageController {
         User user = hostHolder.getUser();
         //分页信息
         page.setLimit(5);
-        page.setPath("/letter/detail");
+        page.setPath("/letter/detail/"+conversationId);
         page.setRows(messageService.findMessageCount(conversationId));
         model.addAttribute("page", page);
         //私信列表
