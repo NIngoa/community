@@ -24,4 +24,5 @@ public interface UserService {
 
     void changePassword(String ticket,String newPassword, User user);
 
+    User findUserByUsername(String toName);
 }
