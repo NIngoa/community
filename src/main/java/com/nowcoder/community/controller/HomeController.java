@@ -4,7 +4,9 @@ import com.nowcoder.community.entity.DiscussPost;
 import com.nowcoder.community.entity.Page;
 import com.nowcoder.community.entity.User;
 import com.nowcoder.community.service.DiscussPostService;
+import com.nowcoder.community.service.LikeService;
 import com.nowcoder.community.service.UserService;
+import com.nowcoder.community.utils.CommunityConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,13 +23,15 @@ import java.util.Map;
 
 @Controller
 @Slf4j
-public class HomeController {
+public class HomeController implements CommunityConstant {
     @Autowired
     private DiscussPostService discussPostService;
 
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private LikeService likeService;
     /**
      * 首页
      * @param model
@@ -47,9 +51,13 @@ public class HomeController {
             int userId = discussPost.getUserId();
             User user = userService.findUserById(userId);
             map.put("user",user);
+            Long likeCount = likeService.findEntityLikeCount(ENTITY_TYPE_POST, discussPost.getId());
+            map.put("likeCount", likeCount);
             discussPosts.add(map);
         }
         model.addAttribute("discussPosts", discussPosts);
         return "/index";
     }
+
+
 }

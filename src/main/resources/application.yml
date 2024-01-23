@@ -24,7 +24,12 @@ spring:
       password: ${nowcoder.community.datasource.password}
       url: jdbc:mysql://${nowcoder.community.datasource.host}:${nowcoder.community.datasource.port}/${nowcoder.community.datasource.database}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
       driver-class-name: ${nowcoder.community.datasource.driver-class-name}
-#mail
+  redis:
+    database: 11
+    host: 192.168.88.130
+    port: 6379
+    password: ${nowcoder.community.redis.password}
+  #mail
   mail:
     host: smtp.qq.com
     port: 465
@@ -53,3 +58,4 @@ community:
   path:
     domain: http://localhost:8080
     upload: d:/work/data/upload
+
