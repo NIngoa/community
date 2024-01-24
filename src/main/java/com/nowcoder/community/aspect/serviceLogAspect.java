@@ -34,6 +34,5 @@ public class serviceLogAspect {
         String method = joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName();
         String date = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.now());
         logger.info(String.format("用户%s,在%s,访问了%s",host,date,method));
-
     }
 }

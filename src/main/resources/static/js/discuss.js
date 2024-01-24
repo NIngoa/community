@@ -1,12 +1,9 @@
-function like(btn, entityType, entityId) {
+function like(btn, entityType, entityId,likeUserId) {
     $.post(
         CONTEXT_PATH + "/like",
-        {"entityType":entityType,"entityId":entityId},
+        {"entityType":entityType,"entityId":entityId,"likeUserId":likeUserId},
         function(data) {
             data = $.parseJSON(data);
-            console.log("Data from server:", data);
-            console.log("likeCount:", data.likeCount);
-            console.log("likeStatus:", data.likeStatus);
             if(data.code ==0) {
                 $(btn).children("i").text(data.likeCount);
                 $(btn).children("b").text(data.likeStatus===1 ? "已赞":"赞");
