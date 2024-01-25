@@ -53,6 +53,13 @@ public class LikeServiceImpl implements LikeService {
          return redisTemplate.opsForSet().size(likeKey);
     }
 
+    /**
+     * 查询用户是否点赞
+     * @param userId
+     * @param entityType
+     * @param entityId
+     * @return
+     */
     @Override
     public Integer findEntityLikeStatus(int userId, Integer entityType, Integer entityId) {
         String likeKey = RedisUtil.getEntityLikeKey(entityId, entityType);
@@ -60,6 +67,11 @@ public class LikeServiceImpl implements LikeService {
         return member ?1:0;
     }
 
+    /**
+     * 查询用户点赞数量
+     * @param userId
+     * @return
+     */
     @Override
     public int selectLikeCount(int userId) {
         String userLikeKey = RedisUtil.getUserLikeKey(userId);

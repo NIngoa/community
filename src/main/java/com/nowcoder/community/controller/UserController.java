@@ -2,8 +2,10 @@ package com.nowcoder.community.controller;
 
 import com.nowcoder.community.annotation.LoginRequired;
 import com.nowcoder.community.entity.User;
+import com.nowcoder.community.service.FollowService;
 import com.nowcoder.community.service.LikeService;
 import com.nowcoder.community.service.UserService;
+import com.nowcoder.community.utils.CommunityConstant;
 import com.nowcoder.community.utils.CommunityUtil;
 import com.nowcoder.community.utils.HostHolder;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +27,7 @@ import java.io.IOException;
 @Controller
 @RequestMapping("/user")
 @Slf4j
-public class UserController {
+public class UserController implements CommunityConstant {
     @Value("${community.path.upload}")
     private String uploadPath;
     @Value("${community.path.domain}")
@@ -38,7 +40,8 @@ public class UserController {
     private HostHolder hostHolder;
     @Autowired
     private LikeService likeService;
-
+    @Autowired
+    private FollowService followService;
     @LoginRequired
     @RequestMapping(path = "/setting",method = RequestMethod.GET)
     public String getSettingPage() {
@@ -152,6 +155,18 @@ public class UserController {
         int likeCount =likeService.selectLikeCount(user.getId());
         //用户点赞数
         model.addAttribute("likeCount",likeCount);
+        //用户关注数
+        Long followeeCount = followService.findFolloweeCount(userId, CommunityConstant.ENTITY_TYPE_USER);
+        model.addAttribute("followeeCount",followeeCount);
+        //用户粉丝数
+        Long followerCount = followService.findFollowerCount(ENTITY_TYPE_USER,userId);
+        model.addAttribute("followerCount",followerCount);
+        //是否关注
+        Boolean isFollow=false;
+        if (hostHolder.getUser()!=null){
+           isFollow = followService.isFollow(hostHolder.getUser().getId(), ENTITY_TYPE_USER, userId);
+        }
+            model.addAttribute("isFollow",isFollow);
         return "/site/profile";
     }
 }
