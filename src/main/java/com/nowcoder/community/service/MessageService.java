@@ -8,17 +8,25 @@ import java.util.List;
 @Service
 public interface MessageService {
 
-    public List<Message>findConversationList(int userId, int offset, int limit);
+     List<Message>findConversationList(int userId, int offset, int limit);
 
-    public int findConversationCount(int userId);
+     int findConversationCount(int userId);
 
-    public List<Message>findMessageList(String conversationId, int offset, int limit);
+     List<Message>findMessageList(String conversationId, int offset, int limit);
 
-    public int findMessageCount(String conversationId);
+     int findMessageCount(String conversationId);
 
-    public int findLetterUnreadCount(int userId,String conversationId);
+     int findLetterUnreadCount(int userId,String conversationId);
 
-    public int insertMessage(Message message);
+     int insertMessage(Message message);
 
     int updateMessageReadStatus(List<Integer> ids);
+
+    Message selectLatestNotification(int userId,String topic);
+
+    int selectNotificationCount(int userId,String topic);
+
+    int selectNotificationUnreadCount(int userId,String topic);
+
+    List<Message> selectNotificationList(int userId, String conversationId, int offset, int limit);
 }

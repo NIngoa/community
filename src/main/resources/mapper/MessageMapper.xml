@@ -71,4 +71,43 @@
             and conversation_id = #{conversationId}
           </if>
     </select>
+    <select id="selectNotificationUnreadCount" resultType="java.lang.Integer">
+        select count(*)
+        from message
+        where from_id = 1
+        and to_id = #{userId}
+        and status = 0
+        <if test="topic != null">
+            and conversation_id = #{topic}
+        </if>
+    </select>
+    <select id="selectNotificationCount" resultType="java.lang.Integer">
+        select count(*)
+        from message
+        where from_id = 1
+          and to_id = #{userId}
+          and conversation_id = #{topic}
+          and status!=2
+    </select>
+    <select id="selectLatestNotification" resultType="com.nowcoder.community.entity.Message">
+        select
+        <include refid="selectFields"/>
+        from message
+        where from_id = 1
+        and to_id = #{userId}
+            and conversation_id = #{topic}
+        order by id desc
+        limit 1
+    </select>
+    <select id="selectNotificationList" resultType="com.nowcoder.community.entity.Message">
+        select
+        <include refid="selectFields"/>
+        from message
+        where from_id=1
+        and to_id=#{userId}
+        and conversation_id=#{topic}
+        and status!=2
+        order by id desc
+        limit #{offset},#{limit}
+    </select>
 </mapper>

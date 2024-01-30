@@ -52,4 +52,24 @@ public class MessageServiceImpl implements MessageService {
     public int updateMessageReadStatus(List<Integer> ids) {
        return  messageMapper.updateMessageReadStatus(ids,1);
     }
+
+    @Override
+    public Message selectLatestNotification(int userId, String topic) {
+        return messageMapper.selectLatestNotification(userId,topic);
+    }
+
+    @Override
+    public int selectNotificationCount(int userId, String topic) {
+        return messageMapper.selectNotificationCount(userId,topic);
+    }
+
+    @Override
+    public int selectNotificationUnreadCount(int userId, String topic) {
+        return messageMapper.selectNotificationUnreadCount(userId,topic);
+    }
+
+    @Override
+    public List<Message> selectNotificationList(int userId, String topic, int offset, int limit) {
+        return messageMapper.selectNotificationList(userId,topic,offset,limit);
+    }
 }
