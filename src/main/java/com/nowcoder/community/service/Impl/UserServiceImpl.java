@@ -1,6 +1,6 @@
 package com.nowcoder.community.service.Impl;
 
-import com.nowcoder.community.dao.LoginTicketMapper;
+import com.alibaba.fastjson2.JSONObject;
 import com.nowcoder.community.dao.UserMapper;
 import com.nowcoder.community.entity.LoginTicket;
 import com.nowcoder.community.entity.User;
@@ -8,9 +8,11 @@ import com.nowcoder.community.utils.CommunityConstant;
 import com.nowcoder.community.service.UserService;
 import com.nowcoder.community.utils.CommunityUtil;
 import com.nowcoder.community.utils.MailClient;
+import com.nowcoder.community.utils.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -19,6 +21,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class UserServiceImpl implements UserService, CommunityConstant {
@@ -28,24 +31,34 @@ public class UserServiceImpl implements UserService, CommunityConstant {
     private MailClient mailClient;
     @Autowired
     private TemplateEngine templateEngine;
-    @Autowired
-    private LoginTicketMapper loginTicketMapper;
+    //    @Autowired
+//    private LoginTicketMapper loginTicketMapper;
     @Value("${community.path.domain}")
     private String domain;
     @Value("${server.servlet.context-path}")
     private String contextPath;
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
 
     /**
      * 根据id查询用户
      */
     @Override
     public User findUserById(int userId) {
-        return userMapper.selectById(userId);
+//        return userMapper.selectById(userId);
+        User user = getCache(userId);
+        if (user == null){
+            user=initCache(userId);
+        }
+        return user;
     }
+    
 
     @Override
     public LoginTicket findLoginTicket(String ticket) {
-        return loginTicketMapper.selectByTicket(ticket);
+        String ticketKey = RedisUtil.getTicketKey(ticket);
+        Object o = redisTemplate.opsForValue().get(ticketKey);
+        return CommunityUtil.getObj(o, LoginTicket.class);
     }
 
     /**
@@ -87,24 +100,25 @@ public class UserServiceImpl implements UserService, CommunityConstant {
         }
         //注册用户
         user.setUsername(user.getUsername());
-        user.setSalt(CommunityUtil.getUUID().substring(0,5));
+        user.setSalt(CommunityUtil.getUUID().substring(0, 5));
         user.setPassword(CommunityUtil.md5(user.getPassword() + user.getSalt()));
         user.setType(0);
         user.setStatus(0);
         user.setActivationCode(CommunityUtil.getUUID());
-        user.setHeaderUrl(String.format("https://images.nowcoder.com/head/%dt.png",new Random().nextInt(1000)));
+        user.setHeaderUrl(String.format("https://images.nowcoder.com/head/%dt.png", new Random().nextInt(1000)));
         user.setCreateTime(LocalDateTime.now());
         userMapper.insertUser(user);
 
         //激活邮件
-        Context context=new Context();
-        context.setVariable("email",user.getEmail());
-        String url=domain+contextPath+"/activation/"+user.getId()+"/"+user.getActivationCode();
-        context.setVariable("url",url);
+        Context context = new Context();
+        context.setVariable("email", user.getEmail());
+        String url = domain + contextPath + "/activation/" + user.getId() + "/" + user.getActivationCode();
+        context.setVariable("url", url);
         String content = templateEngine.process("/mail/activation", context);
-        mailClient.sendMail(user.getEmail(),"激活邮件",content);
+        mailClient.sendMail(user.getEmail(), "激活邮件", content);
         return map;
     }
+
     /**
      * 激活
      */
@@ -112,73 +126,107 @@ public class UserServiceImpl implements UserService, CommunityConstant {
     public int activation(int userId, String code) {
         User user = userMapper.selectById(userId);
         int status = user.getStatus();
-        if (status==1){
+        if (status == 1) {
             return ACTIVATION_REPEAT;
-        }else if (status==0&&user.getActivationCode().equals(code)){
-            userMapper.updateStatus(userId,1);
+        } else if (status == 0 && user.getActivationCode().equals(code)) {
+            userMapper.updateStatus(userId, 1);
+            cleanCache(userId);
             return ACTIVATION_SUCCESS;
-        }else {
+        } else {
             return ACTIVATION_FAIL;
         }
     }
+
     /**
      * 登录
      */
     @Override
     public Map<String, Object> login(String username, String password, int expiredTime) {
-        Map<String,Object>map=new HashMap<>();
-        if (StringUtils.isBlank(username)){
-            map.put("usernameMsg","用户名不能为空");
+        Map<String, Object> map = new HashMap<>();
+        if (StringUtils.isBlank(username)) {
+            map.put("usernameMsg", "用户名不能为空");
             return map;
         }
-        if (StringUtils.isBlank(password)){
-            map.put("passwordMsg","密码不能为空");
+        if (StringUtils.isBlank(password)) {
+            map.put("passwordMsg", "密码不能为空");
             return map;
         }
         User user = userMapper.selectByName(username);
-        if (user==null){
-            map.put("usernameMsg","该用户不存在");
+        if (user == null) {
+            map.put("usernameMsg", "该用户不存在");
             return map;
         }
-        if (user.getStatus()==0){
-            map.put("usernameMsg","该用户未激活");
+        if (user.getStatus() == 0) {
+            map.put("usernameMsg", "该用户未激活");
             return map;
         }
-        password= CommunityUtil.md5(password+ user.getSalt() );
-        if (!password.equals(user.getPassword())){
-            map.put("passwordMsg","密码不正确");
+        password = CommunityUtil.md5(password + user.getSalt());
+        if (!password.equals(user.getPassword())) {
+            map.put("passwordMsg", "密码不正确");
             return map;
         }
-        LoginTicket loginTicket=new LoginTicket();
+        LoginTicket loginTicket = new LoginTicket();
         loginTicket.setUserId(user.getId());
         loginTicket.setTicket(CommunityUtil.getUUID());
         loginTicket.setStatus(0);
         loginTicket.setExpired(LocalDateTime.now().plusSeconds(expiredTime));
-        loginTicketMapper.insertLoginTicket(loginTicket);
-
-        map.put("ticket",loginTicket.getTicket());
+//        loginTicketMapper.insertLoginTicket(loginTicket);
+        String redisKey = RedisUtil.getTicketKey(loginTicket.getTicket());
+        redisTemplate.opsForValue().set(redisKey, loginTicket);
+        map.put("ticket", loginTicket.getTicket());
         return map;
     }
 
     @Override
     public void logout(String ticket) {
-        loginTicketMapper.updateStatus(ticket,1);
+//        loginTicketMapper.updateStatus(ticket, 1);
+        String redisKey = RedisUtil.getTicketKey(ticket);
+        Object o = redisTemplate.opsForValue().get(redisKey);
+        LoginTicket loginTicket = CommunityUtil.getObj(o, LoginTicket.class);
+        loginTicket.setStatus(1);
+        redisTemplate.opsForValue().set(redisKey, loginTicket);
     }
+
 
     @Override
     public int updateHeader(int userId, String headUrl) {
-        return userMapper.updateHeader(userId,headUrl);
+        int rows = userMapper.updateHeader(userId, headUrl);
+        cleanCache(userId);
+        return rows;
     }
 
     @Override
     public void changePassword(String ticket, String newPassword, User user) {
         int userId = user.getId();
-        userMapper.updatePassword(userId,CommunityUtil.md5(newPassword+user.getSalt()));
+        userMapper.updatePassword(userId, CommunityUtil.md5(newPassword + user.getSalt()));
+        cleanCache(userId);
         logout(ticket);
     }
 
     @Override
     public User findUserByUsername(String toName) {
         return userMapper.selectByName(toName);
+    }
+
+    //优先从缓存中获取用户信息
+    @Override
+    public User getCache(Integer userId) {
+        String userKey = RedisUtil.getUserKey(userId);
+        Object o = redisTemplate.opsForValue().get(userKey);
+        return CommunityUtil.getObj(o, User.class);
+    }
+
+    @Override
+    public User initCache(Integer userId) {
+        User user = userMapper.selectById(userId);
+        String userKey = RedisUtil.getUserKey(userId);
+        redisTemplate.opsForValue().set(userKey,user,3600, TimeUnit.SECONDS);
+        return user;
+    }
+
+
+    @Override
+    public void cleanCache(Integer userId) {
+        redisTemplate.delete(RedisUtil.getUserKey(userId));
     }
 }

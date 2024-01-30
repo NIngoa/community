@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public class CommunityUtil {
+
     //生成一个随机字符串
     public static String getUUID(){
         String uuid = UUID.randomUUID().toString().replaceAll("-", "");
@@ -20,6 +21,15 @@ public class CommunityUtil {
             return null;
         }
         return DigestUtils.md5DigestAsHex(key.getBytes());
+    }
+
+    //解析json字符串，返回相应对象
+    public static <T> T getObj(Object o, Class<T> clazz){
+        if (o==null){
+            return null;
+        }
+        String string = JSONObject.toJSONString(o);
+        return JSONObject.parseObject(string, clazz);
     }
 
     public static String getJsonStr(int code, String msg, Map<String,Object>map){

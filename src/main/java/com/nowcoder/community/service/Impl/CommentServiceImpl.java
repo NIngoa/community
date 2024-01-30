@@ -1,7 +1,6 @@
 package com.nowcoder.community.service.Impl;
 
 import com.nowcoder.community.dao.CommentMapper;
-import com.nowcoder.community.dao.DiscussPostMapper;
 import com.nowcoder.community.entity.Comment;
 import com.nowcoder.community.service.CommentService;
 import com.nowcoder.community.service.DiscussPostService;
@@ -13,7 +12,6 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.HtmlUtils;
-import org.unbescape.html.HtmlEscape;
 
 import java.util.List;
 
@@ -56,5 +54,10 @@ public class CommentServiceImpl implements CommentService, CommunityConstant {
             discussPostService.updateCommentCount(comment.getEntityId(), count);
         }
         return rows;
+    }
+
+    @Override
+    public Comment findCommentById(int id) {
+        return commentMapper.selectCommentById(id);
     }
 }

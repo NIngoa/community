@@ -25,4 +25,10 @@ public interface UserService {
     void changePassword(String ticket,String newPassword, User user);
 
     User findUserByUsername(String toName);
+
+    User getCache(Integer userId);
+
+    User initCache(Integer userId);
+
+    void cleanCache(Integer userId);
 }

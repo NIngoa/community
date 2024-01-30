@@ -28,7 +28,11 @@ public class serviceLogAspect {
     @Before("pointcut()")
     public void before(JoinPoint joinPoint){
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (requestAttributes==null){
+            return;
+        }
         HttpServletRequest request = requestAttributes.getRequest();
+
         //获取请求的ip地址
         String host = request.getRemoteHost();
         String method = joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName();
