@@ -55,8 +55,8 @@
                         </li>
                     </ul>
                     <!-- 搜索 -->
-                    <form class="form-inline my-2 my-lg-0" action="site/search.html">
-                        <input class="form-control mr-sm-2" type="search" aria-label="Search"/>
+                    <form class="form-inline my-2 my-lg-0" th:action="@{/search}">
+                        <input class="form-control mr-sm-2" type="search" aria-label="Search" name="keyword" th:value="${keyword}"/>
                         <button class="btn btn-outline-light my-2 my-sm-0" type="submit">搜索</button>
                     </form>
                 </div>
@@ -141,7 +141,7 @@
                         </h6>
                         <div class="text-muted font-size-12">
                             <u class="mr-3" th:utext="${map.user.username}">寒江雪</u> 发布于 <b
-                                th:text="${#temporals.format(map.post.createTime,'yyyy-MM-dd HH:mm:ss')}"> 2019-04-15
+                                th:text="${#dates.format(map.post.createTime,'yyyy-MM-dd HH:mm:ss')}"> 2019-04-15
                             15:32:18</b>
                             <ul class="d-inline float-right">
                                 <li class="d-inline ml-2">赞 <span th:text="${map.likeCount}">11</span></li>

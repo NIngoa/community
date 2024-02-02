@@ -17,6 +17,7 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Service
 public class TestServiceImpl implements TestService {
@@ -45,7 +46,7 @@ public class TestServiceImpl implements TestService {
         post.setTitle("测试");
         post.setContent("测试");
         post.setType(1);
-        post.setCreateTime(LocalDateTime.now());
+        post.setCreateTime(new Date());
         discussPostMapper.insertDiscussPost(post);
 
         Integer.valueOf("abc");
@@ -74,7 +75,7 @@ public class TestServiceImpl implements TestService {
                 post.setTitle("测试");
                 post.setContent("测试");
                 post.setType(1);
-                post.setCreateTime(LocalDateTime.now());
+                post.setCreateTime(new Date());
                 discussPostMapper.insertDiscussPost(post);
                 Integer.valueOf("abc");
                 return "ok";
