@@ -124,6 +124,13 @@ public class MessageController implements CommunityConstant {
         return ids;
     }
 
+    /**
+     * 发送私信
+     *
+     * @param toName
+     * @param content
+     * @return
+     */
     @RequestMapping(path = "/letter/send", method = RequestMethod.POST)
     @ResponseBody
     public String sendMessage(String toName, String content) {
@@ -145,14 +152,20 @@ public class MessageController implements CommunityConstant {
         return CommunityUtil.getJsonStr(0, "发送成功");
     }
 
+    /**
+     * 获取通知列表
+     *
+     * @param model
+     * @return
+     */
     @RequestMapping(path = "/notice/list", method = RequestMethod.GET)
     public String getNoticeList(Model model) {
         User user = hostHolder.getUser();
         //查询评论类型的通知
         Message message = messageService.selectLatestNotification(user.getId(), TOPIC_COMMENT);
-        Map<String, Object> messageVo = new HashMap<>();
-        messageVo.put("message", message);
         if (message != null) {
+            Map<String, Object> messageVo = new HashMap<>();
+            messageVo.put("message", message);
             String content = HtmlUtils.htmlUnescape(message.getContent());
             Map<String, Object> data = JSONObject.parseObject(content, HashMap.class);
             messageVo.put("user", userService.findUserById((Integer) data.get("userId")));
@@ -164,15 +177,16 @@ public class MessageController implements CommunityConstant {
             messageVo.put("count", count);
             int unreadCount = messageService.selectNotificationUnreadCount(user.getId(), TOPIC_COMMENT);
             messageVo.put("unreadCount", unreadCount);
-
+            model.addAttribute("commentNotification", messageVo);
         }
-        model.addAttribute("commentNotification", messageVo);
+
 
         //查询关注类型的通知
         message = messageService.selectLatestNotification(user.getId(), TOPIC_FOLLOW);
-        messageVo = new HashMap<>();
-        messageVo.put("message", message);
+
         if (message != null) {
+            Map<String, Object> messageVo = new HashMap<>();
+            messageVo.put("message", message);
             String content = HtmlUtils.htmlUnescape(message.getContent());
             Map<String, Object> data = JSONObject.parseObject(content, HashMap.class);
             messageVo.put("user", userService.findUserById((Integer) data.get("userId")));
@@ -183,15 +197,16 @@ public class MessageController implements CommunityConstant {
             messageVo.put("count", count);
             int unreadCount = messageService.selectNotificationUnreadCount(user.getId(), TOPIC_FOLLOW);
             messageVo.put("unreadCount", unreadCount);
-
+            model.addAttribute("followNotification", messageVo);
         }
-        model.addAttribute("followNotification", messageVo);
+
 
         //查询点赞类型的通知
         message = messageService.selectLatestNotification(user.getId(), TOPIC_LIKE);
-        messageVo = new HashMap<>();
-        messageVo.put("message", message);
+
         if (message != null) {
+            Map<String, Object> messageVo = new HashMap<>();
+            messageVo.put("message", message);
             String content = HtmlUtils.htmlUnescape(message.getContent());
             Map<String, Object> data = JSONObject.parseObject(content, HashMap.class);
             messageVo.put("user", userService.findUserById((Integer) data.get("userId")));
@@ -203,9 +218,9 @@ public class MessageController implements CommunityConstant {
             messageVo.put("count", count);
             int unreadCount = messageService.selectNotificationUnreadCount(user.getId(), TOPIC_LIKE);
             messageVo.put("unreadCount", unreadCount);
-
+            model.addAttribute("likeNotification", messageVo);
         }
-        model.addAttribute("likeNotification", messageVo);
+
 
         //查询未读消息数量
         int letterUnreadCount = messageService.findLetterUnreadCount(user.getId(), null);

@@ -18,11 +18,11 @@ public interface CommunityConstant {
     /**
      * 默认过期时间
      */
-    int DEFAULT_EXPIRED_SECONDS = 3600*24;
+    int DEFAULT_EXPIRED_SECONDS = 3600 * 24;
     /**
      * 记住我过期时间
      */
-    int REMEMBER_ME_EXPIRED_SECONDS = 3600*24*30;
+    int REMEMBER_ME_EXPIRED_SECONDS = 3600 * 24 * 30;
 
     /**
      * 实体类型：帖子
@@ -40,20 +40,38 @@ public interface CommunityConstant {
     /**
      * 主题类型：评论
      */
-    String TOPIC_COMMENT="comment";
+    String TOPIC_COMMENT = "comment";
     /**
      * 主题类型：点赞
      */
-    String TOPIC_LIKE="like";
+    String TOPIC_LIKE = "like";
     /**
      * 主题类型：关注
      */
-    String TOPIC_FOLLOW="follow";
+    String TOPIC_FOLLOW = "follow";
 
     /**
      * 系统用户id
      */
     int SYSTEM_USER_ID = 1;
 
-    String TOPIC_PUBLISH="publish";
+    /**
+     * 主题类型：发布
+     */
+    String TOPIC_PUBLISH = "publish";
+
+    /**
+     * 权限：普通用户
+     */
+    String AUTHORITY_USER = "user";
+
+    /**
+     * 权限：管理员
+     */
+    String AUTHORITY_ADMIN = "admin";
+
+    /**
+     * 权限：版主
+     */
+    String AUTHORITY_MODERATOR = "moderator";
 }

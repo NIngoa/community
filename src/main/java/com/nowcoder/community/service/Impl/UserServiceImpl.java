@@ -13,14 +13,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -47,12 +46,12 @@ public class UserServiceImpl implements UserService, CommunityConstant {
     public User findUserById(int userId) {
 //        return userMapper.selectById(userId);
         User user = getCache(userId);
-        if (user == null){
-            user=initCache(userId);
+        if (user == null) {
+            user = initCache(userId);
         }
         return user;
     }
-    
+
 
     @Override
     public LoginTicket findLoginTicket(String ticket) {
@@ -220,7 +219,7 @@ public class UserServiceImpl implements UserService, CommunityConstant {
     public User initCache(Integer userId) {
         User user = userMapper.selectById(userId);
         String userKey = RedisUtil.getUserKey(userId);
-        redisTemplate.opsForValue().set(userKey,user,3600, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(userKey, user, 3600, TimeUnit.SECONDS);
         return user;
     }
 
@@ -228,5 +227,24 @@ public class UserServiceImpl implements UserService, CommunityConstant {
     @Override
     public void cleanCache(Integer userId) {
         redisTemplate.delete(RedisUtil.getUserKey(userId));
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities(int userId) {
+        User user = this.findUserById(userId);
+        List<GrantedAuthority> list = new ArrayList<>();
+        list.add(new GrantedAuthority() {
+            @Override
+            public String getAuthority() {
+                if (user.getType() == 1) {
+                    return AUTHORITY_ADMIN;
+                } else if (user.getType() == 2) {
+                    return AUTHORITY_MODERATOR;
+                } else {
+                    return AUTHORITY_USER;
+                }
+            }
+        });
+        return list;
     }
 }
