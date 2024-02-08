@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Controller
@@ -36,6 +35,7 @@ public class DiscussPostController implements CommunityConstant {
 
     @Autowired
     private EventProducer eventProducer;
+
     /**
      * 发布话题
      *
@@ -58,7 +58,7 @@ public class DiscussPostController implements CommunityConstant {
         discussPost.setCreateTime(new Date());
         discussPostService.addDiscussPost(discussPost);
         //触发发帖事件
-        Event event=new Event()
+        Event event = new Event()
                 .setTopic(TOPIC_PUBLISH)
                 .setUserId(userId)
                 .setEntityId(discussPost.getId())
@@ -153,4 +153,49 @@ public class DiscussPostController implements CommunityConstant {
         return "/site/discuss-detail";
     }
 
+    //置顶
+    @RequestMapping(path = "/top", method = RequestMethod.POST)
+    @ResponseBody
+    public String setTop(Integer id) {
+        discussPostService.updateType(id, DISCUSS_POST_TOP);
+        //触发发帖事件
+        Event event = new Event()
+                .setTopic(TOPIC_PUBLISH)
+                .setUserId(hostHolder.getUser().getId())
+                .setEntityId(id)
+                .setEntityType(ENTITY_TYPE_POST);
+        eventProducer.produce(event);
+
+        return CommunityUtil.getJsonStr(0, "置顶成功");
+    }
+
+    //加精
+    @RequestMapping(path = "/wonderful", method = RequestMethod.POST)
+    @ResponseBody
+    public String setWonderful(Integer id) {
+        discussPostService.updateStatus(id, DISCUSS_POST_WONDERFUL);
+        //触发发帖事件
+        Event event = new Event()
+                .setTopic(TOPIC_PUBLISH)
+                .setUserId(hostHolder.getUser().getId())
+                .setEntityId(id)
+                .setEntityType(ENTITY_TYPE_POST);
+        eventProducer.produce(event);
+        return CommunityUtil.getJsonStr(0, "加精成功");
+    }
+
+    //删除
+    @RequestMapping(path = "/delete", method = RequestMethod.POST)
+    @ResponseBody
+    public String setDelete(Integer id) {
+        discussPostService.updateStatus(id, DISCUSS_POST_DELETE);
+        //触发删帖事件
+        Event event = new Event()
+                .setTopic(TOPIC_DELETE)
+                .setUserId(hostHolder.getUser().getId())
+                .setEntityId(id)
+                .setEntityType(ENTITY_TYPE_POST);
+        eventProducer.produce(event);
+        return CommunityUtil.getJsonStr(0, "删除成功");
+    }
 }

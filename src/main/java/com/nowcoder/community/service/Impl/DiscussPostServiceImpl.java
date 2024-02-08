@@ -18,6 +18,7 @@ public class DiscussPostServiceImpl implements DiscussPostService {
 
     @Autowired
     private SensitiveFilter sensitiveFilter;
+
     @Override
     public List<DiscussPost> findDiscussPosts(Integer userId, int page, int pageSize) {
         List<DiscussPost> discussPostsList = discussPostMapper.selectDiscussPosts(userId, page, pageSize);
@@ -31,7 +32,7 @@ public class DiscussPostServiceImpl implements DiscussPostService {
     }
 
     public void addDiscussPost(DiscussPost discussPost) {
-        if (discussPost==null){
+        if (discussPost == null) {
             throw new NullPointerException("参数不能为空!");
         }
         //转义html标签
@@ -51,7 +52,16 @@ public class DiscussPostServiceImpl implements DiscussPostService {
 
     @Override
     public int updateCommentCount(int id, int commentCount) {
-        return discussPostMapper.updateCommentCount(id,commentCount);
+        return discussPostMapper.updateCommentCount(id, commentCount);
     }
 
+    @Override
+    public int updateStatus(int id, int status) {
+        return discussPostMapper.updateStatus(id, status);
+    }
+
+    @Override
+    public int updateType(int id, int type) {
+        return discussPostMapper.updateType(id, type);
+    }
 }

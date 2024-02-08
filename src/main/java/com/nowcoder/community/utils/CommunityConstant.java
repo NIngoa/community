@@ -61,6 +61,11 @@ public interface CommunityConstant {
     String TOPIC_PUBLISH = "publish";
 
     /**
+     * 主题类型：删除
+     */
+    String TOPIC_DELETE = "delete";
+
+    /**
      * 权限：普通用户
      */
     String AUTHORITY_USER = "user";
@@ -74,4 +79,19 @@ public interface CommunityConstant {
      * 权限：版主
      */
     String AUTHORITY_MODERATOR = "moderator";
+
+    /**
+     * 置顶
+     */
+    int DISCUSS_POST_TOP = 1;
+
+    /**
+     * 加精
+     */
+    int DISCUSS_POST_WONDERFUL = 1;
+
+    /**
+     * 删除
+     */
+    int DISCUSS_POST_DELETE = 2;
 }

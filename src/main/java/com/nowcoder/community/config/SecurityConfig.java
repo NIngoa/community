@@ -42,6 +42,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements Comm
                 .hasAnyAuthority(
                         AUTHORITY_ADMIN, AUTHORITY_MODERATOR, AUTHORITY_USER
                 )
+                .antMatchers("/discuss/top", "/discuss/wonderful")
+                .hasAnyAuthority(
+                        AUTHORITY_MODERATOR
+                )
+                .antMatchers("/discuss/delete"
+                ,"/data/**")
+                .hasAnyAuthority(
+                        AUTHORITY_ADMIN
+                )
                 .anyRequest().permitAll()
                 .and().csrf().disable();
 
@@ -53,15 +62,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements Comm
                     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException e) throws IOException, ServletException {
                         String xRequestedWith = request.getHeader("x-requested-with");
                         //异步请求xml
-                            if (xRequestedWith!=null&&xRequestedWith.equals("XMLHttpRequest")){
-                                response.setContentType("application/plain;charset=utf-8");
-                                PrintWriter printWriter = response.getWriter();
-                                printWriter.write(CommunityUtil.getJsonStr(403, "您还没有登录!"));
-                            }else {
-                                //重定向到登录页
-                                response.sendRedirect(request.getContextPath()+"/login");
-                            }
+                        if (xRequestedWith != null && xRequestedWith.equals("XMLHttpRequest")) {
+                            response.setContentType("application/plain;charset=utf-8");
+                            PrintWriter printWriter = response.getWriter();
+                            printWriter.write(CommunityUtil.getJsonStr(403, "您还没有登录!"));
+                        } else {
+                            //重定向到登录页
+                            response.sendRedirect(request.getContextPath() + "/login");
                         }
+                    }
                 })
                 .accessDeniedHandler(new AccessDeniedHandler() {
                     //权限不够
@@ -69,12 +78,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements Comm
                     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException e) throws IOException, ServletException {
                         String xRequestHeader = request.getHeader("x-requested-with");
                         //异步请求xml
-                            if (xRequestHeader!=null&&xRequestHeader.equals("XMLHttpRequest")){
-                                response.setContentType("application/plain;charset=utf-8");
-                                PrintWriter printWriter = response.getWriter();
-                                printWriter.write(CommunityUtil.getJsonStr(403, "您没有权限访问该资源!"));
-                            }else {
-                                response.sendRedirect(request.getContextPath()+"/denied");
+                        if (xRequestHeader != null && xRequestHeader.equals("XMLHttpRequest")) {
+                            response.setContentType("application/plain;charset=utf-8");
+                            PrintWriter printWriter = response.getWriter();
+                            printWriter.write(CommunityUtil.getJsonStr(403, "您没有权限访问该资源!"));
+                        } else {
+                            response.sendRedirect(request.getContextPath() + "/denied");
                         }
                     }
                 });
