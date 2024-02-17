@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface DiscussPostService{
 
-    List<DiscussPost> findDiscussPosts(Integer userId, int page, int pageSize);
+    List<DiscussPost> findDiscussPosts(Integer userId, int page, int pageSize,int orderMode);
 
 
     int findDiscussPostRows(int userId);
@@ -20,4 +20,6 @@ public interface DiscussPostService{
     int updateType(int id, int type);
 
     int updateStatus(int id, int status);
+
+   Integer updateScore(int postId, double score);
 }

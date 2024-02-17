@@ -94,4 +94,9 @@ public interface CommunityConstant {
      * 删除
      */
     int DISCUSS_POST_DELETE = 2;
+
+    /**
+     * 分享
+     */
+    String TOPIC_SHARE = "share";
 }

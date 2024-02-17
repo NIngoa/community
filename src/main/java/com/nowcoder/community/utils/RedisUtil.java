@@ -12,6 +12,7 @@ public class RedisUtil {
     private static final String PREFIX_USER = "user";
     private static final String PREFIX_UV = "uv";
     private static final String PREFIX_DAU = "dau";
+    private static final String PREFIX_POST = "post";
 
     /**
      * 实体点赞
@@ -88,4 +89,8 @@ public class RedisUtil {
         return PREFIX_DAU + SPLIT + startDay + SPLIT + endDay;
     }
 
+    //帖子
+    public static String getPostScoreKey() {
+        return PREFIX_POST + SPLIT + "score";
+    }
 }

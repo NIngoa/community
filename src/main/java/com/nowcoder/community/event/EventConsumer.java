@@ -12,9 +12,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,11 +28,14 @@ public class EventConsumer implements CommunityConstant {
 
     @Autowired
     private MessageService messageService;
-
     @Autowired
     private DiscussPostService discussPostService;
     @Autowired
     private ElasticsearchService elasticsearchService;
+    @Value("${wk.image.command}")
+    private String wkImageCommand;
+    @Value("${wk.image.storage}")
+    private String wkImageStorage;
     @KafkaListener(topics = {TOPIC_COMMENT, TOPIC_LIKE, TOPIC_FOLLOW},groupId = "Community-consumer-group")
     public void consume(ConsumerRecord record) {
         if (record==null||record.value()==null){
@@ -89,5 +94,30 @@ public class EventConsumer implements CommunityConstant {
             return;
         }
         elasticsearchService.deleteDiscussPost(event.getEntityId());
+    }
+    //消费分享事件
+    @KafkaListener(topics = TOPIC_SHARE)
+    public void handleShare(ConsumerRecord record) {
+        if (record==null||record.value()==null){
+            log.error("消息内容为空!");
+            return;
+        }
+        Event event = JSONObject.parseObject(record.value().toString(), Event.class);
+        if (event==null){
+            log.error("消息内容解析失败!");
+            return;
+        }
+        String htmlUrl = (String) event.getData().get("htmlUrl");
+        String filename = (String) event.getData().get("fileName");
+        String suffix = (String) event.getData().get("suffix");
+
+        String cmd=wkImageCommand+" --quality 75 "
+                +htmlUrl+" " +wkImageStorage+"/" +filename+suffix;
+        try {
+            Runtime.getRuntime().exec(cmd);
+            log.info("生成长图成功:"+cmd);
+        } catch (IOException e) {
+            log.error("生成长图失败:"+e.getMessage());
+        }
     }
 }

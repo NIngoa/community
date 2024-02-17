@@ -20,4 +20,8 @@ public interface TestService {
     public Object testTransaction();
 
     public Object save();
+
+    public void execute1();
+
+    public void execute2();
 }

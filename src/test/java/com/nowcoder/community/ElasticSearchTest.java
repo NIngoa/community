@@ -2,9 +2,7 @@ package com.nowcoder.community;
 
 import com.nowcoder.community.dao.DiscussPostMapper;
 import com.nowcoder.community.entity.DiscussPost;
-import io.lettuce.core.GeoArgs;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
@@ -53,14 +51,14 @@ public class ElasticSearchTest {
 
     @Test
     public void testInsertList() {
-        discussPostRepository.saveAll(discussPostMapper.selectDiscussPosts(101, 0, 100));
-        discussPostRepository.saveAll(discussPostMapper.selectDiscussPosts(102, 0, 100));
-        discussPostRepository.saveAll(discussPostMapper.selectDiscussPosts(103, 0, 100));
-        discussPostRepository.saveAll(discussPostMapper.selectDiscussPosts(111, 0, 100));
-        discussPostRepository.saveAll(discussPostMapper.selectDiscussPosts(112, 0, 100));
-        discussPostRepository.saveAll(discussPostMapper.selectDiscussPosts(132, 0, 100));
-        discussPostRepository.saveAll(discussPostMapper.selectDiscussPosts(133, 0, 100));
-        discussPostRepository.saveAll(discussPostMapper.selectDiscussPosts(134, 0, 100));
+        discussPostRepository.saveAll(discussPostMapper.selectDiscussPosts(101, 0, 100,0));
+        discussPostRepository.saveAll(discussPostMapper.selectDiscussPosts(102, 0, 100,0));
+        discussPostRepository.saveAll(discussPostMapper.selectDiscussPosts(103, 0, 100,0));
+        discussPostRepository.saveAll(discussPostMapper.selectDiscussPosts(111, 0, 100,0));
+        discussPostRepository.saveAll(discussPostMapper.selectDiscussPosts(112, 0, 100,0));
+        discussPostRepository.saveAll(discussPostMapper.selectDiscussPosts(132, 0, 100,0));
+        discussPostRepository.saveAll(discussPostMapper.selectDiscussPosts(133, 0, 100,0));
+        discussPostRepository.saveAll(discussPostMapper.selectDiscussPosts(134, 0, 100,0));
     }
 
     @Test

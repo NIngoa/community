@@ -9,7 +9,9 @@ import com.nowcoder.community.service.UserService;
 import com.nowcoder.community.utils.CommunityConstant;
 import com.nowcoder.community.utils.CommunityUtil;
 import com.nowcoder.community.utils.HostHolder;
+import com.nowcoder.community.utils.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,10 +34,10 @@ public class DiscussPostController implements CommunityConstant {
     private CommentService commentService;
     @Autowired
     private LikeService likeService;
-
     @Autowired
     private EventProducer eventProducer;
-
+    @Autowired
+    private RedisTemplate redisTemplate;
     /**
      * 发布话题
      *
@@ -64,7 +66,8 @@ public class DiscussPostController implements CommunityConstant {
                 .setEntityId(discussPost.getId())
                 .setEntityType(ENTITY_TYPE_POST);
         eventProducer.produce(event);
-
+        //计算帖子分数
+        redisTemplate.opsForSet().add(RedisUtil.getPostScoreKey(), discussPost.getId());
         return CommunityUtil.getJsonStr(0, "发布成功");
     }
 
@@ -181,6 +184,8 @@ public class DiscussPostController implements CommunityConstant {
                 .setEntityId(id)
                 .setEntityType(ENTITY_TYPE_POST);
         eventProducer.produce(event);
+        //计算帖子分数
+        redisTemplate.opsForSet().add(RedisUtil.getPostScoreKey(), id);
         return CommunityUtil.getJsonStr(0, "加精成功");
     }
 

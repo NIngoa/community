@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,11 +38,11 @@ public class HomeController implements CommunityConstant {
      * @return
      */
     @RequestMapping(path = "/index",method = RequestMethod.GET)
-    public String getIndexPage(Model model, Page page) {
+    public String getIndexPage(Model model, Page page,@RequestParam(name = "orderMode",defaultValue = "0") int orderMode) {
         log.info("显示帖子:{}",model);
         page.setRows(discussPostService.findDiscussPostRows(0));
-        page.setPath("/index");
-        List<DiscussPost> discussPostsList = discussPostService.findDiscussPosts(0, page.getOffset(), page.getLimit());
+        page.setPath("/index?orderMode="+orderMode);
+        List<DiscussPost> discussPostsList = discussPostService.findDiscussPosts(0, page.getOffset(), page.getLimit(), orderMode);
         List<Map<String, Object>>discussPosts = new ArrayList<>();
         for (DiscussPost discussPost : discussPostsList) {
             Map<String, Object> map=new HashMap<>();
@@ -54,6 +55,7 @@ public class HomeController implements CommunityConstant {
             discussPosts.add(map);
         }
         model.addAttribute("discussPosts", discussPosts);
+        model.addAttribute("orderMode", orderMode);
         return "/index";
     }
 

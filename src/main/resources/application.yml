@@ -51,7 +51,30 @@ spring:
     elasticsearch:
       cluster-name: nowcoder
       cluster-nodes: 127.0.0.1:9300
-
+  task:
+    execution:
+      pool:
+        core-size: 5
+        max-size: 15
+        queue-capacity: 100
+    scheduling:
+      pool:
+        size: 5
+  quartz:
+    job-store-type: jdbc
+    scheduler-name: communityScheduler
+    properties:
+      org:
+        quartz:
+          scheduler:
+            instanceId: AUTO
+          jobStore:
+            class: org.quartz.impl.jdbcjobstore.JobStoreTX
+            driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+            isClustered: true
+          threadPool:
+            class: org.quartz.simpl.SimpleThreadPool
+            threadCount: 5
 
 #mybatis
 mybatis:
@@ -70,4 +93,10 @@ community:
   path:
     domain: http://localhost:8080
     upload: d:/work/data/upload
+
+#wk
+wk:
+  image:
+    command: d:/wkhtmltopdf/bin/wkhtmltoimage
+    storage: d:/work/data/wk-images
 
