@@ -112,5 +112,20 @@ qiniu:
       name: ${nowcoder.community.qiniu.bucket.share.name}
       url: ${nowcoder.community.qiniu.bucket.share.url}
 
+#caffeine
+caffeine:
+  posts:
+    max-size: 15
+    expire-seconds: 180
+#actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: info,health,beans,loggers,database
+        exclude: caches
+  health:
+    elasticsearch:
+      enabled: false
 
 
